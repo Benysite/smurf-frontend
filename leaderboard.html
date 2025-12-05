@@ -47,7 +47,7 @@
 
 </div>
 
-<script>
+    <script>
 const API = "https://smurf-backend-yq7w.onrender.com";
 
 function renderTable(container, rows) {
@@ -88,7 +88,8 @@ function renderTable(container, rows) {
     const global = await g.json();
     const list = global.leaderboard;
 
-    renderTable(document.getElementById("kdTable`"), list);
+    // KD FIX
+    renderTable(document.getElementById("kdTable"), list);
 
     const byScore = [...list].sort((a,b) => b.avgScore - a.avgScore);
     renderTable(document.getElementById("scoreTable"), byScore);

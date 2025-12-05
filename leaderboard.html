@@ -51,6 +51,11 @@
 const API = "https://smurf-backend-yg7w.onrender.com";
 
 function renderTable(container, rows) {
+    if (!rows || rows.length === 0) {
+        container.innerHTML = "<p style='text-align:center;'>Aucune donnée.</p>";
+        return;
+    }
+
     container.innerHTML = `
         <table>
             <thead>
@@ -79,22 +84,37 @@ function renderTable(container, rows) {
     `;
 }
 
-(async () => {
-    const s = await fetch(`${API}/stats/leaderboard/smurf`);
-    const smurf = await s.json();
-    renderTable(document.getElementById("smurfTable"), smurf.players);
+async function loadLeaderboards() {
+    try {
+        // SMURF SCORE
+        const s = await fetch(`${API}/stats/leaderboard/smurf`);
+        const smurf = await s.json();
+        renderTable(document.getElementById("smurfTable"), smurf.players);
 
-    const g = await fetch(`${API}/stats/leaderboard/global`);
-    const global = await g.json();
-    const list = global.leaderboard;
+        // GLOBAL
+        const g = await fetch(`${API}/stats/leaderboard/global`);
+        const global = await g.json();
+        const list = global.leaderboard;
 
-    // KD FIX
-    renderTable(document.getElementById("kdTable"), list);
+        // KD
+        renderTable(document.getElementById("kdTable"), list);
 
-    const byScore = [...list].sort((a,b) => b.avgScore - a.avgScore);
-    renderTable(document.getElementById("scoreTable"), byScore);
+        // SCORE
+        const byScore = [...list].sort((a,b) => b.avgScore - a.avgScore);
+        renderTable(document.getElementById("scoreTable"), byScore);
 
-    const byKills = [...list].sort((a,b) => b.avgKills - a.avgKills);
-    renderTable(document.getElementById("killsTable"), byKills);
-})();
+        // KILLS
+        const byKills = [...list].sort((a,b) => b.avgKills - a.avgKills);
+        renderTable(document.getElementById("killsTable"), byKills);
+
+    } catch (err) {
+        document.querySelectorAll("#smurfTable, #kdTable, #scoreTable, #killsTable")
+            .forEach(div => div.innerHTML = "<p style='text-align:center;color:red;'>Erreur serveur</p>");
+    }
+}
+
+loadLeaderboards();
 </script>
+
+</body>
+</html>

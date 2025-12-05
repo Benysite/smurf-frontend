@@ -134,7 +134,9 @@ async function analyze() {
     box.innerHTML = "<p style='text-align:center'>Chargement...</p>";
 
     try {
-        const response = await fetch(`http://localhost:3001/stats/${pseudo}/smurf-check`);
+        const API = "https://smurf-backend-yg7w.onrender.com";
+
+        const response = await fetch(`${API}/stats/${pseudo}/smurf-check`);
 
         // ❌ Serveur OFF / erreur backend
         if (!response.ok) {

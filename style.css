@@ -1,0 +1,579 @@
+/* ============================================= */
+/*              THEME + FOND VALORANT            */
+/* ============================================= */
+
+:root {
+    --bg: #0b0c0f;
+    --panel: #16181d;
+    --panel-dark: #0f1014;
+    --border: #2b2e35;
+    --text: #f2f2f2;
+    --muted: #8c92a1;
+    --accent-red: #ff004c;
+    --accent-purple: #9d40ff;
+    --radius: 12px;
+    --trans: 0.25s ease;
+}
+
+* {
+    margin: 0; padding: 0;
+    box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
+    color: var(--text);
+}
+
+body {
+    background: var(--bg);
+    padding-bottom: 60px;
+}
+
+
+/* ============================================= */
+/*                 HEADER VALORANT               */
+/* ============================================= */
+
+.valo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 25px 40px;
+    background: var(--panel-dark);
+    border-bottom: 2px solid rgba(255,0,76,0.35);
+    box-shadow: 0 0 25px rgba(255,0,76,0.3);
+    position: relative;
+    z-index: 20;
+}
+
+/* Trait anguleux signature Valorant */
+.valo-header::after {
+    content:"";
+    position:absolute;
+    bottom:-2px; left:0;
+    width:180px;
+    height:3px;
+    background:var(--accent-red);
+    clip-path:polygon(0 0,100% 0,80% 100%,0 100%);
+}
+
+.logo-wrapper {
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+.valo-logo {
+    height:70px;
+    filter: drop-shadow(0 0 10px var(--accent-purple));
+}
+
+.title {
+    font-size:32px;
+    font-weight:900;
+}
+
+.title .accent {
+    color: var(--accent-red);
+}
+
+.valo-nav a {
+    margin-left:30px;
+    text-decoration:none;
+    font-size:18px;
+    font-weight:600;
+    color:#bbb;
+    position:relative;
+    transition:var(--trans);
+}
+
+.valo-nav a:hover {
+    color:white;
+}
+
+.valo-nav a::after {
+    content:"";
+    position:absolute;
+    left:0; bottom:-5px;
+    width:0%;
+    height:2px;
+    background:var(--accent-red);
+    transition:var(--trans);
+}
+
+.valo-nav a:hover::after {
+    width:100%;
+}
+
+
+/* ============================================= */
+/*                 LAYOUT GENERAL                */
+/* ============================================= */
+
+.container {
+    max-width:1000px;
+    margin:40px auto;
+    padding:0 25px;
+}
+
+h1 {
+    font-size:30px;
+    margin-bottom:20px;
+    font-weight:800;
+}
+
+.card {
+    background:var(--panel);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:20px;
+    margin-top:25px;
+}
+
+input, select {
+    padding:12px;
+    width:260px;
+    background:var(--panel-dark);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+}
+
+button {
+    padding:12px 25px;
+    background:var(--accent-red);
+    border:none;
+    border-radius:var(--radius);
+    cursor:pointer;
+    font-weight:700;
+    transition:var(--trans);
+}
+
+button:hover {
+    opacity:0.85;
+}
+
+.kpi {
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+    gap:15px;
+    margin-top:20px;
+}
+
+.kpi .box {
+    background:var(--panel-dark);
+    padding:18px;
+    border-radius:var(--radius);
+    border:1px solid var(--border);
+}
+
+.small {
+    font-size:14px;
+    color:var(--muted);
+}
+
+.badge {
+    display:inline-block;
+    padding:5px 12px;
+    border-radius:999px;
+    border:1px solid var(--border);
+    font-size:12px;
+}
+
+.badge.good { color:#27ae60; border-color:#27ae60; }
+.badge.warn { color:#f1c40f; border-color:#f1c40f; }
+.badge.bad { color:#e74c3c; border-color:#e74c3c; }
+
+/* TABLE */
+table {
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+th, td {
+    padding:12px;
+    border-bottom:1px solid var(--border);
+}
+
+th {
+    background:var(--panel-dark);
+    font-weight:800;
+}
+
+tr:hover td {
+    background:#1d1f25;
+}
+/* =========================== */
+/*          HERO BANNER        */
+/* =========================== */
+
+.hero {
+    height: 420px;
+    background: url("https://images.alphacoders.com/116/1166940.jpg") center/cover no-repeat;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(2px);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 5;
+    text-align: center;
+    max-width: 650px;
+}
+
+.hero-content h2 {
+    font-size: 45px;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px rgba(255, 0, 76, 0.6);
+    margin-bottom: 10px;
+}
+
+.hero-content p {
+    font-size: 18px;
+    color: #ddd;
+    margin-bottom: 25px;
+}
+
+.hero-input input {
+    padding: 14px;
+    width: 260px;
+    background: #0f0f0f;
+    border: 1px solid #333;
+    border-radius: 10px;
+}
+
+.hero-input button {
+    padding: 14px 25px;
+    margin-left: 10px;
+    background: var(--accent-red);
+    border-radius: 10px;
+}
+
+.result-box {
+    margin-top: 20px;
+    padding: 20px;
+    background: #18191d;
+    border: 1px solid #333;
+    border-radius: 10px;
+}
+
+/* =========================== */
+/*         SECTION TITLE       */
+/* =========================== */
+
+.section-title {
+    text-align: center;
+    font-size: 30px;
+    margin: 60px 0 20px;
+    font-weight: 900;
+}
+
+.section-title span {
+    color: var(--accent-red);
+}
+
+/* =========================== */
+/*           FEATURES          */
+/* =========================== */
+
+.features {
+    display: flex;
+    gap: 25px;
+    justify-content: center;
+    padding: 0 40px;
+}
+
+.feature-card {
+    background: #131418;
+    border: 1px solid #333;
+    border-radius: 12px;
+    padding: 25px;
+    width: 280px;
+    text-align: center;
+    transition: 0.25s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-6px);
+    border-color: var(--accent-red);
+    box-shadow: 0 0 20px rgba(255,0,76,0.25);
+}
+
+/* =========================== */
+/*           CTA FINAL         */
+/* =========================== */
+
+.cta-section {
+    text-align: center;
+    padding: 50px 20px;
+    margin-top: 50px;
+}
+
+.cta-section h2 {
+    font-size: 32px;
+    margin-bottom: 20px;
+}
+
+.cta-section button {
+    padding: 14px 35px;
+    font-size: 18px;
+    border-radius: 10px;
+    background: var(--accent-red);
+}
+/* =========================== */
+/*      RESULT PANEL (PRO)     */
+/* =========================== */
+
+.result-panel {
+    margin: 40px auto;
+    width: 80%;
+    max-width: 700px;
+    padding: 30px;
+    background: linear-gradient(145deg, #0f0f10, #151518);
+    border: 1px solid rgba(255, 0, 90, 0.4);
+    border-radius: 18px;
+    box-shadow: 0 0 25px rgba(255, 0, 90, 0.25);
+    color: #fff;
+    text-align: center;
+    animation: fadeIn 0.4s ease-out;
+}
+
+.result-panel h3 {
+    font-size: 28px;
+    font-weight: 900;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    color: #ff005e;
+    letter-spacing: 1px;
+}
+
+.result-panel .separator {
+    width: 60%;
+    height: 2px;
+    background: linear-gradient(to right, transparent, #ff005e, transparent);
+    margin: 15px auto;
+}
+
+.result-line {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.result-line strong {
+    color: #ff4f91;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Effet hover subtil */
+.result-panel:hover {
+    border-color: #ff4f91;
+    box-shadow: 0 0 35px rgba(255, 0, 90, 0.4);
+result-panel {
+    margin-top: 40px !important;
+    display: none;
+}
+}
+#result {
+    display: none;
+}
+.progress {
+    width: 100%;
+    height: 12px;
+    background: #222;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 15px;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #ff4f91, #ff0066);
+    transition: width 0.6s ease;
+}
+
+/* Graphique Chart.js */
+#historyChart {
+    margin-top: 20px;
+    max-height: 250px;
+}
+/* ============================
+   📱 MODE MOBILE (≤ 768px)
+   ============================ */
+@media (max-width: 768px) {
+
+    body {
+        padding: 0;
+        margin: 0;
+    }
+
+    /* HEADER */
+    .valo-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+        padding: 20px;
+    }
+
+    .valo-nav {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .valo-nav a {
+        padding: 10px 20px;
+        font-size: 1.1rem;
+    }
+
+    /* LOGO */
+    .valo-logo {
+        width: 55px;
+    }
+
+    .title {
+        font-size: 1.6rem;
+    }
+
+    /* CONTENU */
+    .container {
+        width: 94%;
+        margin: auto;
+        padding: 10px;
+    }
+
+    h1, h2 {
+        font-size: 1.4rem;
+        text-align: center;
+    }
+
+    /* ANALYSE — INPUT */
+    #pseudo {
+        width: 100%;
+        font-size: 1.1rem;
+        padding: 12px;
+    }
+
+    button {
+        width: 100%;
+        padding: 14px;
+        margin-top: 12px;
+        font-size: 1.2rem;
+    }
+
+    /* RESULT BOX */
+    #result {
+        width: 100%;
+        padding: 18px;
+        font-size: 1rem;
+    }
+
+    /* TABLEAUX SCROLLABLE */
+    table {
+        width: 800px; /* largeur fixe → scroll */
+    }
+
+    .card {
+        overflow-x: auto;
+        padding-bottom: 10px;
+    }
+
+    /* GRAPHIQUE */
+    canvas {
+        max-width: 100%;
+    }
+}
+
+/* ============================
+   📱 MODE TRÈS PETITS ÉCRANS
+   ============================ */
+@media (max-width: 480px) {
+
+    .title {
+        font-size: 1.3rem;
+    }
+
+    .valo-logo {
+        width: 45px;
+    }
+
+    button {
+        font-size: 1.1rem;
+    }
+
+    #result h3 {
+        font-size: 1.2rem;
+    }
+}
+/* === LOADER VALORANT === */
+.valo-loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    z-index: 9999;
+}
+
+.valo-loader p {
+    color: #ff4f91;
+    font-size: 1.4rem;
+    margin-top: 15px;
+    font-weight: 600;
+    text-shadow: 0 0 20px #ff4f91;
+}
+
+.v-ring {
+    width: 80px;
+    height: 80px;
+    border: 5px solid #ff4f91;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    box-shadow: 0 0 20px #ff0062;
+}
+
+.bars {
+    margin-top: 20px;
+    display: flex;
+    gap: 8px;
+}
+
+.bars span {
+    width: 8px;
+    height: 25px;
+    background: #ff4f91;
+    animation: pulse 0.8s infinite ease-in-out alternate;
+    border-radius: 3px;
+}
+
+.bars span:nth-child(2) { animation-delay: 0.2s; }
+.bars span:nth-child(3) { animation-delay: 0.4s; }
+.bars span:nth-child(4) { animation-delay: 0.6s; }
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    from { transform: scaleY(0.4); opacity: 0.5; }
+    to   { transform: scaleY(1); opacity: 1; }
+}
+

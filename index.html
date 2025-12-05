@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>SmurfDetector — Accueil</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script
+</head>
+
+<body>
+
+<!-- ========= HEADER VALORANT ========= -->
+
+<header class="valo-header">
+    <div class="logo-wrapper">
+        <img src="assets/logo.png" class="valo-logo">
+        <h1 class="title"><span class="accent">SMURF</span>DETECTOR</h1>
+    </div>
+
+    <nav class="valo-nav">
+        <a href="index.html">Analyse</a>
+        <a href="leaderboard.html">Leaderboard</a>
+        <a href="stats.html">Stats</a>
+    </nav>
+</header>
+
+<!-- ========= HERO ========= -->
+
+<section class="hero">
+    <div class="hero-content">
+
+        <h2>Détecte les Smurfs sur Valorant</h2>
+        <p>Analyse instantanée basée sur les performances réelles du joueur.</p>
+
+        <div class="hero-input">
+            <input type="text" id="pseudo" placeholder="Entrez un pseudo (ex: Beny)">
+            <button onclick="analyze()">Analyser</button>
+        </div>
+
+    </div>
+
+    <div class="hero-overlay"></div>
+</section>
+<div class="container">
+    <div id="result" class="result-panel"></div>
+<!-- Loader Valorant -->
+<div id="loader" class="valo-loader" aria-hidden="true">
+    <div class="v-ring"></div>
+    <div class="bars">
+        <span></span><span></span><span></span><span></span>
+    </div>
+    <p>Analyse en cours…</p>
+</div>
+
+<!-- Loader Valorant -->
+<div id="loader" class="valo-loader" aria-hidden="true">
+  <div class="v-ring"></div>
+  <div class="bars">
+    <span></span><span></span><span></span><span></span>
+  </div>
+</div>
+
+
+<!-- ========= SECTION TITRE ========= -->
+
+<div class="section-title">
+    Pourquoi utiliser <span>SmurfDetector</span> ?
+</div>
+
+<!-- ========= FEATURES ========= -->
+
+<section class="features">
+
+    <div class="feature-card">
+        <h3>Analyse KD avancée</h3>
+        <p>
+            Analyse du comportement statistique et du ratio K/D sur plusieurs parties.
+        </p>
+    </div>
+
+    <div class="feature-card">
+        <h3>Smurf Score</h3>
+        <p>
+            Un score de suspicion unique basé sur plusieurs paramètres de performance.
+        </p>
+    </div>
+
+    <div class="feature-card">
+        <h3>Historique complet</h3>
+        <p>
+            Visualisation de l’évolution du joueur : kills, KD, score et tendances.
+        </p>
+    </div>
+
+</section>
+
+<!-- ========= CTA FINAL ========= -->
+
+<section class="cta-section">
+    <h2>Prêt à analyser ton prochain match ?</h2>
+    <button onclick="scrollToTop()">Commencer maintenant</button>
+</section>
+
+
+<!-- ========= SCRIPT ANALYSE ========= -->
+
+<script>
+
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function showError(msg) {
+    const box = document.getElementById("result");
+    box.style.display = "block";
+    box.innerHTML = `
+        <p style="color:#ff4f91; text-align:center; font-size:20px; padding:20px;">
+            ${msg}
+        </p>
+    `;
+}
+
+// ------------------------------------------------------------
+// ANALYSE PRINCIPALE
+// ------------------------------------------------------------
+async function analyze() {
+
+    const pseudo = document.getElementById("pseudo").value.trim();
+    if (!pseudo) return;
+
+    const box = document.getElementById("result");
+    box.style.display = "block";
+    box.innerHTML = "<p style='text-align:center'>Chargement...</p>";
+
+    try {
+        const response = await fetch(`http://localhost:3001/stats/${pseudo}/smurf-check`);
+
+        // ❌ Serveur OFF / erreur backend
+        if (!response.ok) {
+            showError("Erreur de connexion au serveur.");
+            return;
+        }
+
+        const data = await response.json();
+
+        // ❌ Joueur introuvable
+        if (!data || data.message === "Aucune donnée trouvée") {
+            showError("Pseudo introuvable 🔎");
+            return;
+        }
+
+        // Headshot (si dispo)
+        const hs = (data.averages && data.averages.hsPercent)
+            ? data.averages.hsPercent.toFixed(1) + "%"
+            : "—";
+
+        // ------------------------------------------------------------
+        // AFFICHAGE RÉSULTAT
+        // ------------------------------------------------------------
+        box.innerHTML = `
+            <h3>Résultat pour ${data.player}</h3>
+
+            <div class="separator"></div>
+
+            <p><strong>Smurf Score :</strong> ${data.suspicionScore}/100</p>
+            <div class="progress">
+                <div class="progress-bar" style="width:${data.suspicionScore}%"></div>
+            </div>
+
+            <div class="separator"></div>
+
+            <p><strong>Verdict :</strong> ${data.verdict}</p>
+            <p><strong>KD Moyen :</strong> ${data.averages.kd.toFixed(2)}</p>
+            <p><strong>Kills moyens :</strong> ${data.averages.avgKills.toFixed(1)}</p>
+            <p><strong>Deaths moyennes :</strong> ${data.averages.avgDeaths.toFixed(1)}</p>
+            <p><strong>Score moyen :</strong> ${data.averages.avgScore.toFixed(0)}</p>
+            <p><strong>Headshot % :</strong> ${hs}</p>
+
+            <div class="separator"></div>
+
+            <h3>Historique</h3>
+            <canvas id="historyChart" height="80"></canvas>
+
+            <div class="separator"></div>
+
+            <h3>Raisons</h3>
+            <ul>
+                ${data.reasons.map(r => `<li>${r}</li>`).join("")}
+            </ul>
+        `;
+
+        drawHistoryChart(data.history);
+
+    } catch (err) {
+        showError("Erreur de connexion au serveur.");
+    }
+}
+
+// ------------------------------------------------------------
+// GRAPHIQUE
+// ------------------------------------------------------------
+function drawHistoryChart(history) {
+    const ctx = document.getElementById("historyChart").getContext("2d");
+
+    new Chart(ctx, {
+        type: "line",
+        data: {
+            labels: history.map((h, i) => "Match " + (i + 1)),
+            datasets: [
+                {
+                    label: "Kills",
+                    data: history.map(h => h.kills),
+                    borderColor: "#ff4f91",
+                    borderWidth: 2,
+                    tension: 0.3
+                },
+                {
+                    label: "Deaths",
+                    data: history.map(h => h.deaths),
+                    borderColor: "#4f91ff",
+                    borderWidth: 2,
+                    tension: 0.3
+                }
+            ]
+        },
+        options: {
+            scales: {
+                y: { beginAtZero: true }
+            },
+            plugins: {
+                legend: { labels: { color: "#fff" } }
+            }
+        }
+    });
+}
+
+</script>
+
+
+
+</body>
+</html>

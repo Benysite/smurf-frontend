@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>SmurfDetector — Leaderboard</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<header class="valo-header">
+    <div class="logo-wrapper">
+        <img src="assets/logo.png" class="valo-logo">
+        <h1 class="title"><span class="accent">SMURF</span>DETECTOR</h1>
+    </div>
+
+    <nav class="valo-nav">
+        <a href="index.html">Analyse</a>
+        <a href="leaderboard.html">Leaderboard</a>
+        <a href="stats.html">Stats</a>
+    </nav>
+</header>
+
+<div class="container">
+    <h1>Classements</h1>
+
+    <div class="card">
+        <h2>🔥 Top Smurf Score</h2>
+        <div id="smurfTable">Chargement…</div>
+    </div>
+
+    <div class="card">
+        <h2>💀 Meilleurs KD</h2>
+        <div id="kdTable">Chargement…</div>
+    </div>
+
+    <div class="card">
+        <h2>🎯 Meilleur Score Moyen</h2>
+        <div id="scoreTable">Chargement…</div>
+    </div>
+
+    <div class="card">
+        <h2>🩸 Meilleur Kills Moyen</h2>
+        <div id="killsTable">Chargement…</div>
+    </div>
+
+</div>
+
+<script>
+function renderTable(container, rows) {
+    container.innerHTML = `
+        <table>
+            <thead>
+                <tr>
+                    <th>Joueur</th>
+                    <th>KD</th>
+                    <th>Kills Moy.</th>
+                    <th>Score Moy.</th>
+                    <th>Smurf Score</th>
+                    <th>Verdict</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${rows.map(r => `
+                    <tr>
+                        <td>${r.player || r._id}</td>
+                        <td>${r.kd?.toFixed(2) || "-"}</td>
+                        <td>${r.avgKills?.toFixed(1) || "-"}</td>
+                        <td>${Math.round(r.avgScore) || "-"}</td>
+                        <td>${r.suspicionScore ?? r.suspicion ?? "-"}</td>
+                        <td>${r.verdict || "-"}</td>
+                    </tr>
+                `).join("")}
+            </tbody>
+        </table>
+    `;
+}
+
+<script>
+const API = "https://smurf-backend-yq7w.onrender.com";
+
+function renderTable(container, rows) {
+    container.innerHTML = `
+        <table>
+            <thead>
+                <tr>
+                    <th>Joueur</th>
+                    <th>Verdict</th>
+                    <th>Smurf Score</th>
+                    <th>KD</th>
+                    <th>Score Moyen</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${rows.map(r => `
+                    <tr>
+                        <td>${r.player || r._id}</td>
+                        <td>${r.verdict || "-"}</td>
+                        <td>${r.suspicionScore ?? r.suspicion ?? "-"}</td>
+                        <td>${r.kd ? r.kd.toFixed(2) : "-"}</td>
+                        <td>${r.avgScore ?? "-"}</td>
+                    </tr>
+                `).join("")}
+            </tbody>
+        </table>
+    `;
+}
+
+(async () => {
+
+    // ---- SMURF SCORE ----
+    const s = await fetch(`${API}/stats/leaderboard/smurf`);
+    const smurf = await s.json();
+    renderTable(document.getElementById("smurfTable"), smurf.players);
+
+    // ---- GLOBAL DATA ----
+    const g = await fetch(`${API}/stats/leaderboard/global`);
+    const global = await g.json();
+    const list = global.leaderboard;
+
+    // KD (déjà trié dans le backend)
+    renderTable(document.getElementById("kdTable"), list);
+
+    // Score moyen (tri client)
+    const byScore = [...list].sort((a,b) => b.avgScore - a.avgScore);
+    renderTable(document.getElementById("scoreTable"), byScore);
+
+    // Kills moyen (tri client)
+    const byKills = [...list].sort((a,b) => b.avgKills - a.avgKills);
+    renderTable(document.getElementById("killsTable"), byKills);
+
+})();
+</script>

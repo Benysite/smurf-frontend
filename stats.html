@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>SmurfDetector — Stats</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+<header class="valo-header">
+    <div class="logo-wrapper">
+        <img src="assets/logo.png" class="valo-logo">
+        <h1 class="title"><span class="accent">SMURF</span>DETECTOR</h1>
+    </div>
+
+    <nav class="valo-nav">
+        <a href="index.html">Analyse</a>
+        <a href="leaderboard.html">Leaderboard</a>
+        <a href="stats.html">Stats</a>
+    </nav>
+</header>
+
+<div class="container">
+    <h1>Graphiques & Évolution</h1>
+
+    <div class="card">
+        <h2>Sélectionner un joueur</h2>
+        <select id="player"></select>
+        <button id="btn">Charger</button>
+    </div>
+
+    <div class="card"><canvas id="chartKills"></canvas></div>
+    <div class="card"><canvas id="chartScore"></canvas></div>
+    <div class="card"><canvas id="chartKD"></canvas></div>
+</div>
+
+<script>
+let ck, cs, ckd;
+
+async function loadPlayers() {
+    const res = await fetch("http://localhost:3001/stats/players/list");
+    const data = await res.json();
+
+    const list = document.getElementById("player");
+    list.innerHTML = data.players.map(p => `<option value="${p}">${p}</option>`).join("");
+}
+
+function destroyCharts() {
+    [ck, cs, ckd].forEach(c => c && c.destroy());
+}
+
+async function loadCharts() {
+    const player = document.getElementById("player").value;
+    const res = await fetch(`http://localhost:3001/stats/${player}`);
+    const data = await res.json();
+    const stats = data.stats.sort((a,b)=> new Date(a.date)-new Date(b.date));
+
+    const labels = stats.map(s=> new Date(s.date).toLocaleString());
+    const kills = stats.map(s=> s.kills);
+    const score = stats.map(s=> s.score);
+    const kd = stats.map(s=> (s.deaths===0 ? s.kills : s.kills/s.deaths).toFixed(2));
+
+    destroyCharts();
+
+    ck = new Chart(document.getElementById("chartKills"), {
+        type:"line",
+        data:{ labels, datasets:[{ label:"Kills", data:kills, borderColor:"#ff004c" }] }
+    });
+
+    cs = new Chart(document.getElementById("chartScore"), {
+        type:"line",
+        data:{ labels, datasets:[{ label:"Score", data:score, borderColor:"#9d40ff" }] }
+    });
+
+    ckd = new Chart(document.getElementById("chartKD"), {
+        type:"bar",
+        data:{ labels, datasets:[{ label:"KD", data:kd, backgroundColor:"#ff004c" }] }
+    });
+}
+
+document.getElementById("btn").onclick = loadCharts;
+
+(async () => {
+    await loadPlayers();
+    await loadCharts();
+})();
+</script>
+
+</body>
+</html>

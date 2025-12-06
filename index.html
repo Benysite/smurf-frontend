@@ -127,7 +127,11 @@ function getRankFromStats(data) {
 
     return "radiant";
 }
+
+
+// 🔥 Analyse du pseudo
 async function analyze() {
+
     console.log("Analyse lancée !");
 
     const pseudo = document.getElementById("pseudo").value.trim();
@@ -153,13 +157,8 @@ async function analyze() {
         if (!data || data.message === "Aucune donnée trouvée")
             return showError("Pseudo introuvable 🔎");
 
-        const hs = data.averages?.hsPercent
-            ? data.averages.hsPercent.toFixed(1) + "%"
-            : "—";
-
         const rank = getRankFromStats(data);
 
-        // 🔥 HTML final (propre)
         box.style.display = "block";
         box.innerHTML = `
             <h3>Résultat pour ${data.player}</h3>
@@ -202,6 +201,8 @@ async function analyze() {
     }
 }
 
+
+// 🔥 Graphique historique
 function drawHistoryChart(history) {
     const ctx = document.getElementById("historyChart").getContext("2d");
 
@@ -233,6 +234,7 @@ function drawHistoryChart(history) {
     });
 }
 </script>
+
 
 
 </body>

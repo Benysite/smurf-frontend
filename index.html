@@ -128,7 +128,7 @@ async function analyze() {
     try {
         const API = "https://smurf-backend-yg7w.onrender.com";
 
-        const response = await fetch(`${API}/stats/${pseudo}/smurf-check`);
+        const response = await fetch(`${API}/stats/smurf-check/${encodeURIComponent(pseudo)}`);
 
         // ❌ Serveur OFF / erreur backend
         if (!response.ok) {

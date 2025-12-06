@@ -524,14 +524,13 @@ result-panel {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-
     z-index: 9999;
 
     background: rgba(0, 0, 0, 0.8);
     padding: 25px 40px;
     border-radius: 12px;
 
-    display: flex;
+    display: none; /* ✔ Le loader est maintenant caché */
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -539,6 +538,7 @@ result-panel {
     color: white;
     font-family: 'Montserrat', sans-serif;
 }
+
 .valo-loader {
     display: none !important;
 }

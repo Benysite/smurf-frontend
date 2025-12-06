@@ -127,24 +127,26 @@ async function analyze() {
             : "—";
 
         box.style.display = "block";
-        box.innerHTML = `
-            <h3>Résultat pour ${data.player}</h3>
+       box.innerHTML = `
+    <h3>Résultat pour ${data.player}</h3>
 
-            <div class="separator"></div>
+    <img src="assets/ranks/${data.rank}.png" class="rank-icon" style="width:120px; display:block; margin:10px auto;">
 
-            <p><strong>Smurf Score :</strong> ${data.suspicionScore}/100</p>
-            <div class="progress">
-                <div class="progress-bar" style="width:${data.suspicionScore}%"></div>
-            </div>
+    <div class="separator"></div>
 
-            <div class="separator"></div>
+    <p><strong>Smurf Score :</strong> ${data.suspicionScore}/100</p>
+    <div class="progress">
+        <div class="progress-bar" style="width:${data.suspicionScore}%"></div>
+    </div>
 
-            <p><strong>Verdict :</strong> ${data.verdict}</p>
-            <p><strong>KD Moyen :</strong> ${data.averages.kd.toFixed(2)}</p>
-            <p><strong>Kills moyens :</strong> ${data.averages.avgKills.toFixed(1)}</p>
-            <p><strong>Deaths moyennes :</strong> ${data.averages.avgDeaths.toFixed(1)}</p>
-            <p><strong>Score moyen :</strong> ${data.averages.avgScore.toFixed(0)}</p>
-            <p><strong>Headshot % :</strong> ${hs}</p>
+    <div class="separator"></div>
+
+    <p><strong>Verdict :</strong> ${data.verdict}</p>
+    <p><strong>KD Moyen :</strong> ${data.averages.kd.toFixed(2)}</p>
+    <p><strong>Kills moyens :</strong> ${data.averages.avgKills.toFixed(1)}</p>
+    <p><strong>Deaths moyennes :</strong> ${data.averages.avgDeaths.toFixed(1)}</p>
+    <p><strong>Score moyen :</strong> ${data.averages.avgScore.toFixed(0)}</p>
+`;
 
             <div class="separator"></div>
 

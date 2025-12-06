@@ -89,44 +89,7 @@ function showError(msg) {
         </p>`;
 }
 
-async function analyze() {
-    console.log("Analyse lancée !");
-
-    const pseudo = document.getElementById("pseudo").value.trim();
-    if (!pseudo) return;
-
-    const loader = document.getElementById("loader");
-    const box = document.getElementById("result");
-
-    // Reset affichage
-    box.style.display = "none";
-    box.innerHTML = "";
-    loader.style.display = "flex"; // ✔ correct
-
-    try {
-        const API = "https://smurf-backend-yg7w.onrender.com";
-        const url = `${API}/stats/player/${encodeURIComponent(pseudo)}/smurf-check`;
-
-        const response = await fetch(url);
-
-        if (!response.ok) {
-            showError("Erreur de connexion au serveur.");
-            return;
-        }
-
-        const data = await response.json();
-        loader.style.display = "none";
-
-        if (!data || data.message === "Aucune donnée trouvée") {
-            showError("Pseudo introuvable 🔎");
-            return;
-        }
-
-        const hs = (data.averages && data.averages.hsPercent)
-            ? data.averages.hsPercent.toFixed(1) + "%"
-            : "—";
-
-        box.style.display = "block";
+// 🔥 Calcul du rang selon le KD
 function getRankFromStats(data) {
     const kd = data.averages.kd;
 
@@ -164,32 +127,61 @@ function getRankFromStats(data) {
 
     return "radiant";
 }
-box.style.display = "block";
-const rank = getRankFromStats(data);
+async function analyze() {
+    console.log("Analyse lancée !");
 
-box.innerHTML = `
-    <h3>Résultat pour ${data.player}</h3>
+    const pseudo = document.getElementById("pseudo").value.trim();
+    if (!pseudo) return;
 
-    <img src="assets/ranks/${rank}.png"
-         class="rank-icon"
-         style="width:130px; display:block; margin:10px auto;">
+    const loader = document.getElementById("loader");
+    const box = document.getElementById("result");
 
-    <div class="separator"></div>
+    box.style.display = "none";
+    box.innerHTML = "";
+    loader.style.display = "flex";
 
-    <p><strong>Smurf Score :</strong> ${data.suspicionScore}/100</p>
-    <div class="progress">
-        <div class="progress-bar" style="width:${data.suspicionScore}%"></div>
-    </div>
+    try {
+        const API = "https://smurf-backend-yg7w.onrender.com";
+        const url = `${API}/stats/player/${encodeURIComponent(pseudo)}/smurf-check`;
 
-    <div class="separator"></div>
+        const response = await fetch(url);
+        if (!response.ok) return showError("Erreur de connexion au serveur.");
 
-    <p><strong>Verdict :</strong> ${data.verdict}</p>
-    <p><strong>KD Moyen :</strong> ${data.averages.kd.toFixed(2)}</p>
-    <p><strong>Kills moyens :</strong> ${data.averages.avgKills.toFixed(1)}</p>
-    <p><strong>Deaths moyennes :</strong> ${data.averages.avgDeaths.toFixed(1)}</p>
-    <p><strong>Score moyen :</strong> ${data.averages.avgScore.toFixed(0)}</p>
-`;
+        const data = await response.json();
+        loader.style.display = "none";
 
+        if (!data || data.message === "Aucune donnée trouvée")
+            return showError("Pseudo introuvable 🔎");
+
+        const hs = data.averages?.hsPercent
+            ? data.averages.hsPercent.toFixed(1) + "%"
+            : "—";
+
+        const rank = getRankFromStats(data);
+
+        // 🔥 HTML final (propre)
+        box.style.display = "block";
+        box.innerHTML = `
+            <h3>Résultat pour ${data.player}</h3>
+
+            <img src="assets/ranks/${rank}.png"
+                 class="rank-icon"
+                 style="width:130px; display:block; margin:10px auto;">
+
+            <div class="separator"></div>
+
+            <p><strong>Smurf Score :</strong> ${data.suspicionScore}/100</p>
+            <div class="progress">
+                <div class="progress-bar" style="width:${data.suspicionScore}%"></div>
+            </div>
+
+            <div class="separator"></div>
+
+            <p><strong>Verdict :</strong> ${data.verdict}</p>
+            <p><strong>KD Moyen :</strong> ${data.averages.kd.toFixed(2)}</p>
+            <p><strong>Kills moyens :</strong> ${data.averages.avgKills.toFixed(1)}</p>
+            <p><strong>Deaths moyennes :</strong> ${data.averages.avgDeaths.toFixed(1)}</p>
+            <p><strong>Score moyen :</strong> ${data.averages.avgScore.toFixed(0)}</p>
 
             <div class="separator"></div>
 
@@ -198,10 +190,9 @@ box.innerHTML = `
 
             <div class="separator"></div>
 
-            ${data.reasons && data.reasons.length > 0 ? `
-                <h3>Raisons</h3>
-                <ul>${data.reasons.map(r => `<li>${r}</li>`).join("")}</ul>
-            ` : ""}
+            ${data.reasons?.length
+                ? `<h3>Raisons</h3><ul>${data.reasons.map(r => `<li>${r}</li>`).join("")}</ul>`
+                : ""}
         `;
 
         drawHistoryChart(data.history);
@@ -236,12 +227,8 @@ function drawHistoryChart(history) {
             ]
         },
         options: {
-            scales: {
-                y: { beginAtZero: true }
-            },
-            plugins: {
-                legend: { labels: { color: "#fff" } }
-            }
+            scales: { y: { beginAtZero: true } },
+            plugins: { legend: { labels: { color: "#fff" } } }
         }
     });
 }

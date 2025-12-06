@@ -41,21 +41,34 @@
 const API = "https://smurf-backend-yg7w.onrender.com";
 let ck, cs, ckd;
 
+// ----------------------
+// Charger liste joueurs
+// ----------------------
 async function loadPlayers() {
     const res = await fetch(`${API}/stats/players/list`);
     const data = await res.json();
 
     const list = document.getElementById("player");
-    list.innerHTML = data.players.map(p => `<option value="${p}">${p}</option>`).join("");
+    list.innerHTML = data.players
+        .map(p => `<option value="${p}">${p}</option>`)
+        .join("");
 }
 
+// ----------------------
+// Détruire anciens graphs
+// ----------------------
 function destroyCharts() {
     [ck, cs, ckd].forEach(c => c && c.destroy());
 }
 
+// ----------------------
+// Charger graphiques
+// ----------------------
 async function loadCharts() {
     const player = document.getElementById("player").value;
-    const res = await fetch(`${API}/stats/${player}`);
+
+    // ⚠️ ROUTE CORRIGÉE ICI !!!
+    const res = await fetch(`${API}/stats/player/${player}`);
     const data = await res.json();
 
     const stats = data.stats.sort((a, b) => new Date(a.date) - new Date(b.date));
@@ -63,7 +76,9 @@ async function loadCharts() {
     const labels = stats.map(s => new Date(s.date).toLocaleString());
     const kills = stats.map(s => s.kills);
     const score = stats.map(s => s.score);
-    const kd = stats.map(s => (s.deaths === 0 ? s.kills : s.kills / s.deaths).toFixed(2));
+    const kd = stats.map(s =>
+        (s.deaths === 0 ? s.kills : s.kills / s.deaths).toFixed(2)
+    );
 
     destroyCharts();
 
@@ -94,6 +109,7 @@ async function loadCharts() {
 
 document.getElementById("btn").onclick = loadCharts;
 
+// Auto-chargement
 (async () => {
     await loadPlayers();
     await loadCharts();
@@ -102,4 +118,3 @@ document.getElementById("btn").onclick = loadCharts;
 
 </body>
 </html>
-

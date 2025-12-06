@@ -10,8 +10,6 @@
 
 <body>
 
-<!-- ========= HEADER VALORANT ========= -->
-
 <header class="valo-header">
     <div class="logo-wrapper">
         <img src="assets/logo.png" class="valo-logo">
@@ -25,11 +23,8 @@
     </nav>
 </header>
 
-<!-- ========= HERO ========= -->
-
 <section class="hero">
     <div class="hero-content">
-
         <h2>Détecte les Smurfs sur Valorant</h2>
         <p>Analyse instantanée basée sur les performances réelles du joueur.</p>
 
@@ -37,121 +32,95 @@
             <input type="text" id="pseudo" placeholder="Entrez un pseudo (ex: Beny)">
             <button onclick="analyze()">Analyser</button>
         </div>
-
     </div>
 
     <div class="hero-overlay"></div>
 </section>
+
 <div class="container">
     <div id="result" class="result-panel"></div>
-<!-- Loader Valorant -->
-<div id="loader" class="valo-loader" aria-hidden="true">
-    <div class="v-ring"></div>
-    <div class="bars">
-        <span></span><span></span><span></span><span></span>
+
+    <div id="loader" class="valo-loader" aria-hidden="true" style="display:none;">
+        <div class="v-ring"></div>
+        <div class="bars"><span></span><span></span><span></span><span></span></div>
+        <p>Analyse en cours…</p>
     </div>
-    <p>Analyse en cours…</p>
+
+    <div class="section-title">
+        Pourquoi utiliser <span>SmurfDetector</span> ?
+    </div>
+
+    <section class="features">
+        <div class="feature-card">
+            <h3>Analyse KD avancée</h3>
+            <p>Analyse du comportement statistique et du ratio K/D sur plusieurs parties.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>Smurf Score</h3>
+            <p>Un score de suspicion unique basé sur plusieurs paramètres de performance.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>Historique complet</h3>
+            <p>Visualisation de l’évolution du joueur : kills, KD, score et tendances.</p>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <h2>Prêt à analyser ton prochain match ?</h2>
+        <button onclick="scrollToTop()">Commencer maintenant</button>
+    </section>
 </div>
-
-
-<!-- ========= SECTION TITRE ========= -->
-
-<div class="section-title">
-    Pourquoi utiliser <span>SmurfDetector</span> ?
-</div>
-
-<!-- ========= FEATURES ========= -->
-
-<section class="features">
-
-    <div class="feature-card">
-        <h3>Analyse KD avancée</h3>
-        <p>
-            Analyse du comportement statistique et du ratio K/D sur plusieurs parties.
-        </p>
-    </div>
-
-    <div class="feature-card">
-        <h3>Smurf Score</h3>
-        <p>
-            Un score de suspicion unique basé sur plusieurs paramètres de performance.
-        </p>
-    </div>
-
-    <div class="feature-card">
-        <h3>Historique complet</h3>
-        <p>
-            Visualisation de l’évolution du joueur : kills, KD, score et tendances.
-        </p>
-    </div>
-
-</section>
-
-<!-- ========= CTA FINAL ========= -->
-
-<section class="cta-section">
-    <h2>Prêt à analyser ton prochain match ?</h2>
-    <button onclick="scrollToTop()">Commencer maintenant</button>
-</section>
-
-
-<!-- ========= SCRIPT ANALYSE ========= -->
 
 <script>
-
 function scrollToTop() {
     window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function showError(msg) {
+    document.getElementById("loader").style.display = "none";
     const box = document.getElementById("result");
     box.style.display = "block";
     box.innerHTML = `
         <p style="color:#ff4f91; text-align:center; font-size:20px; padding:20px;">
             ${msg}
-        </p>
-    `;
+        </p>`;
 }
 
-// ------------------------------------------------------------
-// ANALYSE PRINCIPALE
-// ------------------------------------------------------------
 async function analyze() {
-
     const pseudo = document.getElementById("pseudo").value.trim();
     if (!pseudo) return;
 
+    const loader = document.getElementById("loader");
     const box = document.getElementById("result");
-    box.style.display = "block";
-    box.innerHTML = "<p style='text-align:center'>Chargement...</p>";
+
+    loader.style.display = "block";
+    box.innerHTML = "";
 
     try {
         const API = "https://smurf-backend-yg7w.onrender.com";
+        const url = `${API}/stats/player/${encodeURIComponent(pseudo)}/smurf-check`;
 
-        const response = await fetch(`${API}/stats/player/${encodeURIComponent(pseudo)}/smurf-check`)
+        const response = await fetch(url);
 
-        // ❌ Serveur OFF / erreur backend
         if (!response.ok) {
             showError("Erreur de connexion au serveur.");
             return;
         }
 
         const data = await response.json();
+        loader.style.display = "none";
 
-        // ❌ Joueur introuvable
         if (!data || data.message === "Aucune donnée trouvée") {
             showError("Pseudo introuvable 🔎");
             return;
         }
 
-        // Headshot (si dispo)
         const hs = (data.averages && data.averages.hsPercent)
             ? data.averages.hsPercent.toFixed(1) + "%"
             : "—";
 
-        // ------------------------------------------------------------
-        // AFFICHAGE RÉSULTAT
-        // ------------------------------------------------------------
         box.innerHTML = `
             <h3>Résultat pour ${data.player}</h3>
 
@@ -179,9 +148,7 @@ async function analyze() {
             <div class="separator"></div>
 
             <h3>Raisons</h3>
-            <ul>
-                ${data.reasons.map(r => `<li>${r}</li>`).join("")}
-            </ul>
+            <ul>${(data.reasons || []).map(r => `<li>${r}</li>`).join("")}</ul>
         `;
 
         drawHistoryChart(data.history);
@@ -191,9 +158,6 @@ async function analyze() {
     }
 }
 
-// ------------------------------------------------------------
-// GRAPHIQUE
-// ------------------------------------------------------------
 function drawHistoryChart(history) {
     const ctx = document.getElementById("historyChart").getContext("2d");
 
@@ -228,10 +192,7 @@ function drawHistoryChart(history) {
         }
     });
 }
-
 </script>
-
-
 
 </body>
 </html>

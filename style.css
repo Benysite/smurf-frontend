@@ -539,3 +539,7 @@ result-panel {
     color: white;
     font-family: 'Montserrat', sans-serif;
 }
+.valo-loader {
+    display: none !important;
+}
+

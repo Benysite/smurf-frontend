@@ -91,7 +91,14 @@ function showError(msg) {
 async function analyze() {
     const pseudo = document.getElementById("pseudo").value.trim();
     if (!pseudo) return;
+    // 🔥 FIX affichage : réinitialiser le résultat
+    const loader = document.getElementById("loader");
+    const box = document.getElementById("result");
 
+    box.style.display = "none";
+    box.innerHTML = "";
+
+    loader.style.display = "flex";
     const loader = document.getElementById("loader");
     const box = document.getElementById("result");
 

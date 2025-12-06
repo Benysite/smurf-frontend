@@ -94,7 +94,7 @@ async function loadLeaderboards() {
         // GLOBAL
         const g = await fetch(`${API}/stats/leaderboard/global`);
         const global = await g.json();
-        const list = global.leaderboard;
+        const list = global.leaderboard || [];
 
         // KD
         renderTable(document.getElementById("kdTable"), list);
@@ -108,6 +108,7 @@ async function loadLeaderboards() {
         renderTable(document.getElementById("killsTable"), byKills);
 
     } catch (err) {
+        console.error("Erreur:", err);
         document.querySelectorAll("#smurfTable, #kdTable, #scoreTable, #killsTable")
             .forEach(div => div.innerHTML = "<p style='text-align:center;color:red;'>Erreur serveur</p>");
     }

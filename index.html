@@ -72,7 +72,6 @@
         <button onclick="scrollToTop()">Commencer maintenant</button>
     </section>
 </div>
-
 <script>
 console.log("Script chargé.");
 
@@ -89,6 +88,7 @@ function showError(msg) {
             ${msg}
         </p>`;
 }
+
 async function analyze() {
     console.log("Analyse lancée !");
 
@@ -164,7 +164,8 @@ async function analyze() {
     } catch (err) {
         showError("Erreur de connexion au serveur.");
     }
-}
+}   <!-- 🔥 LA FERMETURE MANQUANTE ÉTAIT ICI 🔥 -->
+
 function drawHistoryChart(history) {
     const ctx = document.getElementById("historyChart").getContext("2d");
 
@@ -200,6 +201,7 @@ function drawHistoryChart(history) {
     });
 }
 </script>
+
 
 </body>
 </html>
